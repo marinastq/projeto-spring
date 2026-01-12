@@ -1,5 +1,6 @@
 package br.com.marinas.projeto.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -34,6 +35,11 @@ public class Estudante {
     @Column(name = "atualizado_em", nullable = false, updatable = true)
     private LocalDateTime atualizadoEm;
 
+    @OneToOne(cascade = CascadeType.ALL) //o que faz em uma entidade faz na outra
+    @JoinColumn(name = "dados_bancarios_id", referencedColumnName = "id")
+    @JsonManagedReference //sinaliza que tem os campos de dadosBancarios no Json
+    private  DadosBancarios dadosBancarios;
+
     public Long getId() {
         return id;
     }
@@ -62,19 +68,25 @@ public class Estudante {
         return atualizadoEm;
     }
 
+    public DadosBancarios getDadosBancarios() {
+        return dadosBancarios;
+    }
+
     public Estudante() {
     }
 
-    public Estudante(Long id, String nome, String endereco, Long meioPagamento, String curso) {
+    public Estudante(Long id, String nome, String endereco, Long meioPagamento, String curso, DadosBancarios dadosBancarios) {
         this.id = id;
         this.nome = nome;
         this.endereco = endereco;
         this.meioPagamento = meioPagamento;
         this.curso = curso;
+        this.dadosBancarios = dadosBancarios;
     }
 
-    public Estudante atualizar (String nome, String endereco, Long meioPagamento, String curso) {
-        return  new Estudante(this.id, nome, endereco, meioPagamento, curso);
+    public Estudante atualizar (String nome, String endereco, Long meioPagamento,
+                                String curso, DadosBancarios dadosBancarios) {
+        return  new Estudante(this.id, nome, endereco, meioPagamento, curso, dadosBancarios);
     }
 
 }

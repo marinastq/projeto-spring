@@ -15,4 +15,26 @@ public interface EstudanteRepository extends JpaRepository<Estudante, Long> {
 
     @Query("SELECT c FROM Estudante c WHERE c.curso = :curso")
     List<Estudante> findByCurso(String curso);
+
+    @Query("SELECT c FROM Estudante c WHERE c.nome LIKE :nome%")
+    List<Estudante> findByNomeComeco(String nome);
+
+    @Query("SELECT c FROM Estudante c WHERE c.curso = :curso%")
+    List<Estudante> findByCursoComeco(String curso);
+
+    List<Estudante> findByNomeStartingWith(String nome);
+
+    List<Estudante> findByNomeStartingWithAndCurso(String nome, String curso);
+
+    List<Estudante> findByEnderecoStartingWithOrderByEnderecoDesc(String endereco);
+
+    List<Estudante> findByIdLessThanEqual(Long id);
+
+    //
+    List<Estudante> findByIdLessThanEqualAndCurso(Long id, String curso);
+
+    List<Estudante> findByIdGreaterThanEqualAndCurso(Long id, String curso);
+
+    List<Estudante> findByIdGreaterThanEqualAndMeioPagamento(Long id, Long meioPagamento);
+
 }

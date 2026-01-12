@@ -7,6 +7,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class EstudanteMapper {
     public Estudante toUpdatedEntity(Estudante atual, AtualizarEstudanteDTO dto) {
-        return atual.atualizar(dto.getNome(), dto.getEndereco(), dto.getMeioPagamento(), dto.getCurso());
+        return atual.atualizar(dto.getNome(), dto.getEndereco(), dto.getMeioPagamento(), dto.getCurso(), dto.getDadosBancarios());
     }
 }

@@ -1,5 +1,6 @@
 package br.com.marinas.projeto.dto;
 
+import br.com.marinas.projeto.model.DadosBancarios;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,6 +11,7 @@ public class AtualizarEstudanteDTO {
     private String endereco;
     private  Long meioPagamento;
     private String curso;
+    private DadosBancarios dadosBancarios;
 
     public String getNome() {
         return nome;
@@ -25,5 +27,9 @@ public class AtualizarEstudanteDTO {
 
     public String getCurso() {
         return curso;
+    }
+
+    public DadosBancarios getDadosBancarios() {
+        return dadosBancarios;
     }
 }

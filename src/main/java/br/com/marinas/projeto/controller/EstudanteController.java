@@ -52,15 +52,57 @@ public class EstudanteController {
         return estudanteService.excluirEstudanteById(id);
     }
 
+    //http://localhost:8080/v1/estudantes/nome/xxxxxx  (xxxxxx = Nome do estudante cadastrado)
     @GetMapping("/estudantes/nome/{nome}")
     @ResponseStatus(HttpStatus.OK)
     public  ResponseEntity<Estudante> buscarEstudantePeloNome(@PathVariable String nome){
         return estudanteService.buscaEstudanteByNome(nome);
     }
 
+    //http://localhost:8080/v1/estudantes/curso?nome_curso=curso 1   (curso 1 = curso cadastrado na base)
     @GetMapping("/estudantes/curso")
     @ResponseStatus(HttpStatus.OK)
     public  List<Estudante> buscarEstudantePeloCurso(@RequestParam String nome_curso){
         return estudanteService.buscaEstudanteByCurso(nome_curso);
     }
+
+    //http://localhost:8080/v1/estudantes/nomecomeco?comeco_nome=xxxx
+    @GetMapping("/estudantes/nomecomeco")
+    @ResponseStatus(HttpStatus.OK)
+    public  List<Estudante> buscarEstudantePeloComecoNomeDesafio(@RequestParam String comeco_nome){
+        return estudanteService.buscaEstudanteByNomeComeco(comeco_nome);
+    }
+
+    @GetMapping("/estudantes/nome")
+    @ResponseStatus(HttpStatus.OK)
+    public  List<Estudante> buscarEstudantePeloComecoNome(@RequestParam String comeco_nome){
+        return estudanteService.listaEstudantePeloInicioDoNome(comeco_nome);
+    }
+
+    //http://localhost:8080/v1/estudantes/nome-curso?comeco_nome=estudante 01&curso=curso 1
+    @GetMapping("/estudantes/nome-curso")
+    @ResponseStatus(HttpStatus.OK)
+    public  List<Estudante> listaEstudantePeloInicioDoNomeECurso(
+            @RequestParam String comeco_nome,
+            @RequestParam String curso){
+        return estudanteService.listaEstudantePeloInicioDoNomeECurso(comeco_nome, curso);
+    }
+
+
+    //http://localhost:8080/v1/estudantes/endereco?endereco=rua
+    @GetMapping("/estudantes/endereco")
+    @ResponseStatus(HttpStatus.OK)
+    public  List<Estudante> listaEstudantePeloEnderecoOrdenadoDesc(
+            @RequestParam String endereco){
+        return estudanteService.listaEstudantePeloEnderecoOrdenadoDesc(endereco);
+    }
+
+    //http://localhost:8080/v1/estudantes/primeiros-estudantes?id=3
+    @GetMapping("/estudantes/primeiros-estudantes")
+    @ResponseStatus(HttpStatus.OK)
+    public  List<Estudante> listaPrimeirosEstudante(
+            @RequestParam Long id){
+        return estudanteService.listaPrimeirosEstudante(id);
+    }
+
 }
