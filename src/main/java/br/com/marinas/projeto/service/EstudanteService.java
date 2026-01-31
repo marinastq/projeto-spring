@@ -1,6 +1,8 @@
 package br.com.marinas.projeto.service;
 
 import br.com.marinas.projeto.dto.AtualizarEstudanteDTO;
+import br.com.marinas.projeto.exception.EstudanteDuplicadoException;
+import br.com.marinas.projeto.exception.EstudanteNaoEncontradoException;
 import br.com.marinas.projeto.mapper.EstudanteMapper;
 import br.com.marinas.projeto.model.Estudante;
 import br.com.marinas.projeto.repository.EstudanteRepository;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EstudanteService {
@@ -23,30 +26,41 @@ public class EstudanteService {
         this.estudanteMapper = mapper;
     }
 
-    public Estudante criarEstudante(Estudante estudante){
-        return  estudanteRepository.save(estudante);
+    public Estudante criarEstudante(Estudante estudante) throws Exception {
+        try{
+            return  estudanteRepository.save(estudante);
+        }catch (Exception e){
+            throw new EstudanteDuplicadoException("Estudante com o nome j� cadastrado");
+        }
     }
 
     public List<Estudante> listarEstudantes(){
         return estudanteRepository.findAll();
     }
 
-    public ResponseEntity<Estudante> buscarEstudanteById(Long id){
+    public Estudante buscarEstudanteById(Long id)
+        throws EstudanteNaoEncontradoException {
+
         return estudanteRepository.findById(id)
-                //public <U> Optional<U> map(Function<? super T, ? extends U> mapper)
-                .map(estudante -> ResponseEntity.ok().body(estudante))
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new EstudanteNaoEncontradoException(id));
     }
 
-    public ResponseEntity<Estudante> atualizarEstudanteById(Long id, AtualizarEstudanteDTO dto){
+//    public ResponseEntity<Estudante> buscarEstudanteById(Long id){
+//        return estudanteRepository.findById(id)
+//                //public <U> Optional<U> map(Function<? super T, ? extends U> mapper)
+//                .map(estudante -> ResponseEntity.ok().body(estudante))
+//                .orElse(ResponseEntity.notFound().build());
+//    }
+
+    public Estudante atualizarEstudanteById(Long id, AtualizarEstudanteDTO dto) throws EstudanteNaoEncontradoException {
         return estudanteRepository.findById(id)
                 .map(estudanteToUpdate ->{
                     Estudante atualizado = estudanteMapper.toUpdatedEntity(estudanteToUpdate, dto);
 
                     atualizado = estudanteRepository.save(atualizado);
-                    return ResponseEntity.ok().body(atualizado);
+                    return atualizado;
 
-                }).orElse(ResponseEntity.notFound().build());
+                }).orElseThrow(() -> new EstudanteNaoEncontradoException(id));
     }
 
     /*

@@ -1,6 +1,7 @@
 package br.com.marinas.projeto.controller;
 
 import br.com.marinas.projeto.dto.AtualizarEstudanteDTO;
+import br.com.marinas.projeto.exception.EstudanteNaoEncontradoException;
 import br.com.marinas.projeto.mapper.EstudanteMapper;
 import br.com.marinas.projeto.model.Estudante;
 import br.com.marinas.projeto.service.EstudanteService;
@@ -23,7 +24,7 @@ public class EstudanteController {
 
     @PostMapping("/estudantes")
     @ResponseStatus(HttpStatus.CREATED)
-    public Estudante CriarEstudante(@RequestBody Estudante estudante){
+    public Estudante CriarEstudante(@RequestBody Estudante estudante) throws Exception {
         return estudanteService.criarEstudante(estudante);
     }
 
@@ -35,15 +36,16 @@ public class EstudanteController {
 
     @GetMapping("/estudantes/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Estudante> getEstudante(@PathVariable Long id){
-        return estudanteService.buscarEstudanteById(id);
+    public ResponseEntity<Estudante> getEstudante(@PathVariable Long id) throws EstudanteNaoEncontradoException {
+        return ResponseEntity.ok(estudanteService.buscarEstudanteById(id));
     }
 
     @PutMapping("/estudantes/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Estudante> atualizarEstudanteById(@PathVariable Long id,
-                                                            @RequestBody AtualizarEstudanteDTO estudante){
-        return estudanteService.atualizarEstudanteById(id, estudante);
+                                                            @RequestBody AtualizarEstudanteDTO estudante)
+            throws EstudanteNaoEncontradoException {
+        return ResponseEntity.ok(estudanteService.atualizarEstudanteById(id, estudante));
     }
 
     @DeleteMapping("/estudantes/{id}")
@@ -104,5 +106,4 @@ public class EstudanteController {
             @RequestParam Long id){
         return estudanteService.listaPrimeirosEstudante(id);
     }
-
 }
