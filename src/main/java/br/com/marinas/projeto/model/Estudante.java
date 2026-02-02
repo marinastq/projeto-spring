@@ -18,7 +18,7 @@ public class Estudante {
     @Column(nullable = false, unique = true)
     private String nome;
 
-    @Column(nullable = false, length = 10)
+    @Column(nullable = false, length = 100)
     private String endereco;
 
     @Column(nullable = false)
