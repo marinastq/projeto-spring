@@ -32,4 +32,12 @@ public class AtualizarEstudanteDTO {
     public DadosBancarios getDadosBancarios() {
         return dadosBancarios;
     }
+
+    public AtualizarEstudanteDTO(String nome, String endereco, Long meioPagamento, String curso, DadosBancarios dadosBancarios) {
+        this.nome = nome;
+        this.endereco = endereco;
+        this.meioPagamento = meioPagamento;
+        this.curso = curso;
+        this.dadosBancarios = dadosBancarios;
+    }
 }

@@ -7,6 +7,7 @@ import br.com.marinas.projeto.mapper.EstudanteMapper;
 import br.com.marinas.projeto.model.Estudante;
 import br.com.marinas.projeto.repository.EstudanteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -26,12 +27,21 @@ public class EstudanteService {
         this.estudanteMapper = mapper;
     }
 
-    public Estudante criarEstudante(Estudante estudante) throws Exception {
+    //metodo que lanca a exception com a trava do banco de dados (model Estudante)
+    public Estudante criarEstudante(Estudante estudante) throws EstudanteDuplicadoException {
         try{
             return  estudanteRepository.save(estudante);
-        }catch (Exception e){
-            throw new EstudanteDuplicadoException("Estudante com o nome j� cadastrado");
+        }catch (DataIntegrityViolationException e){
+            throw new EstudanteDuplicadoException("Estudante com o nome ja cadastrado");
         }
+    }
+
+    public Estudante criarEstudanteComValidacao(Estudante estudante) throws EstudanteDuplicadoException {
+        if(estudanteRepository.existsByNome(estudante.getNome())){
+            throw new EstudanteDuplicadoException("Estudante com o nome ja cadastrado");
+        }
+
+        return  estudanteRepository.save(estudante);
     }
 
     public List<Estudante> listarEstudantes(){

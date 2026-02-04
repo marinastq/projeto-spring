@@ -86,7 +86,13 @@ public class Estudante {
 
     public Estudante atualizar (String nome, String endereco, Long meioPagamento,
                                 String curso, DadosBancarios dadosBancarios) {
-        return  new Estudante(this.id, nome, endereco, meioPagamento, curso, dadosBancarios);
+        this.nome = nome;
+        this.endereco = endereco;
+        this.meioPagamento = meioPagamento;
+        this.curso = curso;
+        this.dadosBancarios = dadosBancarios;
+
+        return this;
     }
 
 }

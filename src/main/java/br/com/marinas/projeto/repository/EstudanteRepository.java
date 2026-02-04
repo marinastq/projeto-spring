@@ -37,4 +37,5 @@ public interface EstudanteRepository extends JpaRepository<Estudante, Long> {
 
     List<Estudante> findByIdGreaterThanEqualAndMeioPagamento(Long id, Long meioPagamento);
 
+    boolean existsByNome(String nome);
 }
