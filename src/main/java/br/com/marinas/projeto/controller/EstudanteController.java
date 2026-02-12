@@ -5,9 +5,14 @@ import br.com.marinas.projeto.exception.EstudanteNaoEncontradoException;
 import br.com.marinas.projeto.mapper.EstudanteMapper;
 import br.com.marinas.projeto.model.Estudante;
 import br.com.marinas.projeto.service.EstudanteService;
+import io.micrometer.core.annotation.Timed;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.micrometer.core.instrument.Counter;
+
 
 import java.util.List;
 import java.util.Objects;
@@ -16,15 +21,33 @@ import java.util.Objects;
 @RequestMapping("/v1")
 public class EstudanteController {
 
+    Counter novosEstudantesCounter;
+
+    Counter estudantesDesmatriculados;
+
+    private final MeterRegistry meterRegistry;
+
     private EstudanteService estudanteService;
 
-    public EstudanteController(EstudanteService estudanteService) {
+    public EstudanteController(EstudanteService estudanteService,
+                               MeterRegistry meterRegistry) {
         this.estudanteService = estudanteService;
+
+        novosEstudantesCounter = Counter.builder("novos_estudantes_counter")
+                .description("Estudantes matriculados")
+                .register(meterRegistry);
+
+        estudantesDesmatriculados = Counter.builder("estudantes_desmatriculados_counter")
+                .description("Estudantes desmatriculados")
+                .register(meterRegistry);
+
+        this.meterRegistry = meterRegistry;
     }
 
     @PostMapping("/estudantes")
     @ResponseStatus(HttpStatus.CREATED)
     public Estudante CriarEstudante(@RequestBody Estudante estudante) throws Exception {
+        novosEstudantesCounter.increment();
         return estudanteService.criarEstudante(estudante);
     }
 
@@ -42,15 +65,28 @@ public class EstudanteController {
 
     @PutMapping("/estudantes/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @Timed(value = "estudante.atualizar.duracao", description = "Tempo gasto para atualizar um estudante")
     public ResponseEntity<Estudante> atualizarEstudanteById(@PathVariable Long id,
                                                             @RequestBody AtualizarEstudanteDTO estudante)
             throws EstudanteNaoEncontradoException {
-        return ResponseEntity.ok(estudanteService.atualizarEstudanteById(id, estudante));
+        // Inicia a contagem do tempo
+        Timer.Sample sample = Timer.start(meterRegistry);
+
+        Estudante estudanteAtualizado = estudanteService.atualizarEstudanteById(id, estudante);
+
+        // Para a contagem e registra a métrica
+        sample.stop(meterRegistry.timer("estudante.atualizar.duracao"));
+
+        // Contador simples de chamadas
+        meterRegistry.counter("estudante.atualizar.chamadas").increment();
+
+        return  ResponseEntity.ok(estudanteAtualizado);
     }
 
     @DeleteMapping("/estudantes/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public  ResponseEntity<Object> excluirEstudanteById(@PathVariable Long id){
+        estudantesDesmatriculados.increment();
         return estudanteService.excluirEstudanteById(id);
     }
 
